@@ -137,6 +137,3 @@ curl -X PATCH "http://localhost:8080/api/tasks/1/status?status=DONE" \
 ```bash
 mvn test
 ```
-
-## Tác giả
-Đoàn Đăng Khoa — Backend Intern Candidate

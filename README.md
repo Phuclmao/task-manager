@@ -83,10 +83,10 @@ API sẽ chạy tại `http://localhost:8080`
 curl -X POST http://localhost:8080/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
-    "username": "khoa",
-    "email": "khoa@example.com",
+    "username": "phuc",
+    "email": "phuc@example.com",
     "password": "123456",
-    "fullName": "Đoàn Đăng Khoa"
+    "fullName": "Cao Huu Phuc"
   }'
 ```
 
@@ -94,7 +94,7 @@ curl -X POST http://localhost:8080/api/auth/register \
 ```bash
 curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"username": "khoa", "password": "123456"}'
+  -d '{"username": "phuc", "password": "123456"}'
 ```
 → Copy `token` từ response để dùng ở các request sau.
 
@@ -107,7 +107,6 @@ curl -X POST http://localhost:8080/api/tasks \
     "title": "Học Spring Boot",
     "description": "Hoàn thành tutorial Spring Boot",
     "priority": "HIGH",
-    "dueDate": "2024-12-31"
   }'
 ```
 

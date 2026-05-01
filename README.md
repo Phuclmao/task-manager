@@ -1,6 +1,6 @@
 # Task Manager API
 
-REST API quản lý công việc cá nhân, xây dựng bằng **Spring Boot 3 + Spring Security + JWT + MySQL**.
+REST API quản lý công việc cá nhân, xây dựng bằng **Spring Boot 3 + Spring Security + JWT + SQLServer**.
 
 ## Tech Stack
 
@@ -8,7 +8,7 @@ REST API quản lý công việc cá nhân, xây dựng bằng **Spring Boot 3 +
 |-------|-----------|
 | Framework | Spring Boot 3.2 |
 | Security | Spring Security + JWT (jjwt 0.11.5) |
-| Database | MySQL 8 + Spring Data JPA / Hibernate |
+| Database | SQLServer + Spring Data JPA / Hibernate |
 | Build Tool | Maven |
 | Java | Java 17 |
 
@@ -30,7 +30,7 @@ src/main/java/com/example/taskmanager/
 
 ### 1. Yêu cầu
 - Java 17+
-- MySQL 8+
+- SQLSERVER 16
 - Maven 3.8+
 
 ### 2. Tạo database

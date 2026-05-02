@@ -1,138 +1,167 @@
-# Task Manager API
+# ✅ Task Manager API
 
-REST API quản lý công việc cá nhân, xây dựng bằng **Spring Boot 3 + Spring Security + JWT + SQLServer**.
+Hệ thống quản lý công việc cá nhân được xây dựng bằng **Spring Boot 3**, tích hợp xác thực **JWT**, phân quyền theo role, và các nghiệp vụ như tạo, cập nhật, lọc và thống kê công việc.
 
-## Tech Stack
+---
+
+## 🛠 Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
+|-------|------------|
 | Framework | Spring Boot 3.2 |
 | Security | Spring Security + JWT (jjwt 0.11.5) |
-| Database | SQLServer + Spring Data JPA / Hibernate |
+| Database | SQL Server + Spring Data JPA / Hibernate |
+| API Docs | Swagger / OpenAPI 3.0 |
 | Build Tool | Maven |
 | Java | Java 17 |
+| Test | JUnit 5 + Mockito |
 
-## Cấu trúc project
+---
+
+## ✨ Tính năng nổi bật
+
+- 🔐 **JWT Authentication** — Đăng ký, đăng nhập, xác thực token
+- 👥 **Phân quyền Admin/User** — Admin quản lý toàn bộ, User chỉ quản lý task của mình
+- 📝 **Quản lý công việc** — Tạo, cập nhật, xóa, tìm kiếm task
+- 🔍 **Lọc task** — Filter theo status, priority
+- ⚡ **Cập nhật nhanh** — PATCH endpoint cập nhật chỉ status mà không cần gửi toàn bộ dữ liệu
+- 📊 **Thống kê** — Đếm task theo trạng thái TODO / IN_PROGRESS / DONE
+- 📖 **API Documentation** — Swagger UI đầy đủ, có thể test trực tiếp
+
+---
+
+## 🗄 Kiến trúc Database
 
 ```
-src/main/java/com/example/taskmanager/
-├── config/         # SecurityConfig, UserDetailsConfig
-├── controller/     # AuthController, TaskController
-├── dto/            # Request/Response DTOs
-├── entity/         # User, Task (JPA Entities)
-├── exception/      # GlobalExceptionHandler
-├── repository/     # UserRepository, TaskRepository
-├── security/       # JwtUtil, JwtAuthFilter
-└── service/        # AuthService, TaskService
+users (1) ──────────── (n) tasks
 ```
 
-## Cài đặt và chạy
+**2 bảng:** `users`, `tasks`
 
-### 1. Yêu cầu
+---
+
+## 🚀 Cài đặt và chạy
+
+### Yêu cầu
 - Java 17+
-- SQLSERVER 16
+- SQL Server
 - Maven 3.8+
 
-### 2. Tạo database
+### Bước 1 — Tạo database
 ```sql
-CREATE DATABASE task_manager_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE task_manager_db;
 ```
 
-### 3. Cấu hình `application.properties`
+### Bước 2 — Cấu hình `application.properties`
 ```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/task_manager_db?createDatabaseIfNotExist=true&useSSL=false
-spring.datasource.username=root
+spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=task_manager_db;encrypt=false;trustServerCertificate=true
+spring.datasource.username=sa
 spring.datasource.password=YOUR_PASSWORD
 ```
 
-### 4. Chạy project
+### Bước 3 — Chạy project
 ```bash
 mvn spring-boot:run
 ```
-API sẽ chạy tại `http://localhost:8080`
 
----
-
-## API Endpoints
-
-### Auth (không cần token)
-
-| Method | Endpoint | Mô tả |
-|--------|----------|-------|
-| POST | `/api/auth/register` | Đăng ký tài khoản |
-| POST | `/api/auth/login` | Đăng nhập, nhận JWT |
-
-### Tasks (cần JWT token trong header)
-
-| Method | Endpoint | Mô tả |
-|--------|----------|-------|
-| POST | `/api/tasks` | Tạo task mới |
-| GET | `/api/tasks` | Lấy tất cả task (có filter) |
-| GET | `/api/tasks/{id}` | Lấy chi tiết task |
-| PUT | `/api/tasks/{id}` | Cập nhật task |
-| PATCH | `/api/tasks/{id}/status` | Cập nhật status |
-| DELETE | `/api/tasks/{id}` | Xóa task |
-| GET | `/api/tasks/stats` | Thống kê task |
-
----
-
-## Ví dụ sử dụng (cURL)
-
-### Đăng ký
-```bash
-curl -X POST http://localhost:8080/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "phuc",
-    "email": "phuc@example.com",
-    "password": "123456",
-    "fullName": "Cao Huu Phuc"
-  }'
+### Bước 4 — Truy cập Swagger UI
 ```
-
-### Đăng nhập
-```bash
-curl -X POST http://localhost:8080/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"username": "phuc", "password": "123456"}'
-```
-→ Copy `token` từ response để dùng ở các request sau.
-
-### Tạo task mới
-```bash
-curl -X POST http://localhost:8080/api/tasks \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Học Spring Boot",
-    "description": "Hoàn thành tutorial Spring Boot",
-    "priority": "HIGH",
-  }'
-```
-
-### Lấy task (filter theo status)
-```bash
-curl -X GET "http://localhost:8080/api/tasks?status=TODO&priority=HIGH" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
-```
-
-### Cập nhật status thành DONE
-```bash
-curl -X PATCH "http://localhost:8080/api/tasks/1/status?status=DONE" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN"
+http://localhost:8080/swagger-ui/index.html
 ```
 
 ---
 
-## Enum Values
+## 📡 API Endpoints
 
-**Task Status:** `TODO` | `IN_PROGRESS` | `DONE`
+### 🔐 Auth
+| Method | Endpoint | Mô tả | Auth |
+|--------|----------|-------|------|
+| POST | `/api/auth/register` | Đăng ký tài khoản | ❌ |
+| POST | `/api/auth/login` | Đăng nhập, nhận JWT | ❌ |
 
-**Task Priority:** `LOW` | `MEDIUM` | `HIGH`
+### 📝 Tasks
+| Method | Endpoint | Mô tả | Auth |
+|--------|----------|-------|------|
+| POST | `/api/tasks` | Tạo task mới | 🔐 User |
+| GET | `/api/tasks` | Danh sách task (filter: status, priority) | 🔐 User |
+| GET | `/api/tasks/{id}` | Chi tiết task | 🔐 User |
+| PUT | `/api/tasks/{id}` | Cập nhật task | 🔐 User |
+| PATCH | `/api/tasks/{id}/status` | Cập nhật nhanh status | 🔐 User |
+| DELETE | `/api/tasks/{id}` | Xóa task | 🔐 User |
+| GET | `/api/tasks/stats` | Thống kê task | 🔐 User |
 
 ---
 
-## Chạy Unit Test
+## 💡 Ví dụ sử dụng
+
+### 1. Đăng ký & Đăng nhập
+```json
+POST /api/auth/register
+{
+  "username": "phuc",
+  "email": "phuc@example.com",
+  "password": "123456",
+  "fullName": "Cao Hữu Phúc"
+}
+```
+
+### 2. Tạo task mới
+```json
+POST /api/tasks
+Authorization: Bearer <token>
+{
+  "title": "Học Spring Boot",
+  "description": "Hoàn thành project task manager",
+  "priority": "HIGH",
+  "dueDate": "2025-12-31"
+}
+```
+
+### 3. Lọc task theo status và priority
+```
+GET /api/tasks?status=TODO&priority=HIGH
+```
+
+### 4. Cập nhật nhanh status
+```
+PATCH /api/tasks/1/status?status=DONE
+```
+
+### 5. Thống kê task
+```
+GET /api/tasks/stats
+```
+Response:
+```json
+{
+  "totalTasks": 10,
+  "todoCount": 4,
+  "inProgressCount": 3,
+  "doneCount": 3
+}
+```
+
+---
+
+## 🧪 Chạy Unit Test
+
 ```bash
 mvn test
 ```
+
+**4 test cases** bao gồm:
+- Tạo task mới thành công
+- Lấy danh sách task của user
+- Xóa task không tồn tại → throw exception
+- Cập nhật status task thành công
+
+---
+
+## 📋 Enum Values
+
+| Enum | Values |
+|------|--------|
+| Task Status | `TODO` / `IN_PROGRESS` / `DONE` |
+| Task Priority | `LOW` / `MEDIUM` / `HIGH` |
+
+---
